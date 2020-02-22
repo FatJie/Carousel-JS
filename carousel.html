@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    *{
+	  margin:0;padding:0;
+	}
+	ul{
+	  list-style:none;
+	}
+	#ID{
+	  width:800px;
+	  margin:100px auto 0;
+	}
+	#carousel{
+	  width:800px;
+	  overflow:hidden;
+	  position:relative;
+	}
+	#img.transition{
+	  transition:all .5s linear;
+	}
+	#img>li{
+	  width:800px;
+	  float:left;
+	}
+	img{
+	  width:800px;
+	}
+	#point{
+	  width:100px;
+      margin:0 auto;
+      position:absolute;
+      bottom:25px;
+      left:50%;
+      margin-left:-50px;
+	}
+	#point>li{
+	  float:left;
+      width:10px; height:10px;
+      background-color:#fff;
+      border-radius:5px;
+      margin:0 5px;
+      cursor:pointer;
+	}
+	#point>li.active{
+	  background:#ff4757;
+	}
+	#prev,#next{
+	  width:60px;
+      height:100%;
+      position:absolute;
+      top:0;
+      background-repeat:no-repeat;
+      background-position:center;
+      cursor:pointer;
+	}
+	#prev{
+	  left:20px;
+	  background-image:url(img/prev.png);
+	}
+	#next{
+	  right:20px;
+	  background-image:url(img/next.png);
+	}
+  </style>
+</head>
+<body>
+<div id="ID">
+  <div id="carousel">
+    <div id="prev"></div>
+	<ul id="img" style="width:4800px;margin-left:0;">
+	  <li>
+	    <a href="javascript:;"><img src="img/1.jpg"></a>
+	  </li>
+	  <li>
+	    <a href="javascript:;"><img src="img/2.jpg"></a>
+	  </li>
+	  <li>
+	    <a href="javascript:;"><img src="img/3.jpg"></a>
+	  </li>
+	  <li>
+	    <a href="javascript:;"><img src="img/4.jpg"></a>
+	  </li>
+	  <li>
+	    <a href="javascript:;"><img src="img/5.jpg"></a>
+	  </li>
+	  <li>
+	    <a href="javascript:;"><img src="img/1.jpg"></a>
+	  </li>
+	</ul>
+	<ul id="point">
+	  <li class="active"></li>
+	  <li></li>
+	  <li></li>
+	  <li></li>
+	  <li></li>
+	</ul>
+	<div id="next"></div>
+  </div>
+ </div>
+ <!-- ʵ���ֲ������ƶ� -->
+ <script>
+   var i=0;//��ʾ������ʾ�ڼ���ͼƬ
+   var liWidth=800;//ÿ��li�Ĺ̶�����
+   var liCount=5;//li�ܸ���
+   var ulImg=document.getElementById("img")//�ֲ�ʱͼƬ�ƶ���ul
+   var ulPoint=document.getElementById("point")//�ֲ�ʱ�·�Բ���ƶ���ul
+   var lisPoint=ulPoint.children;
+   /* �ӵ�ǰλ���ƶ���ͼƬ�±귶Χ������һ��λ�� */
+   function moveTo(to){
+	  //��δ���β�to��ֵ����Ĭ��ͼƬ�Զ��ֲ�����һ��
+      if(to==undefined){to=i+1;}
+	  if(i==0){//�޸�
+		  if(to>i){
+		     ulImg.className="transition";//��li���ֲ�ͼƬ���»ص�0λ��ʱ���ٸ�ul���¼���class="transition"ʹ����Լ����ֲ�?
+		  }else{
+		     ulImg.className="";//ȥ��ul��transition
+		     ulImg.style.marginLeft=-liCount*liWidth+"px";
+		     setTimeout(function(){//��ʱ����Ϊ�˽�����moveTo������ͼ���class="transition"����һ��ʱ���?
+		        moveTo(liCount-1);
+		     },100)
+		       return;
+		    }
+		}
+	  i=to;//�Ƚ���ʶ�ڼ���ͼƬ�ı���i��ΪĿ��λ��
+	  ulImg.style.marginLeft=-i*liWidth+"px";//����i��������ulImg����ƫ�Ƶľ��루marginleft�� 
+	  for(var liPoint of lisPoint){
+	    liPoint.className="";//
+	  }
+	  if(i==liCount){
+	    i=0;
+		setTimeout(function(){//���ֲ������һ�����һ���ظ���li֮��
+		  ulImg.className="";//�������ul��transition����
+		  ulImg.style.marginLeft=0;//�ٽ�ul��margin-left��ֵΪ0����˲����������һ�����һ��?--������ͬ��img�Ĺ���
+		},500)
+	  }
+	  lisPoint[i].className="active";//�����ڵ�ǰλ�õ�li����class="active"
+   } 
+
+/* �����ƶ���ť */
+
+    var prev=document.getElementById("prev");
+    var next=document.getElementById("next");
+    //�ÿ��أ����ƣ��ϴζ���û�в����꣬�´ζ������ܿ�ʼ��
+    var canClick=true;
+    //������ť���õ��ƶ�������n����1ʱ���ƶ���i+1λ�ã����ơ�n����-1ʱ���ƶ���i-1λ�ã�����
+    function move(n){
+      if(canClick){//ֻ�п��Ե���ʱ
+        moveTo(i+n);//�ŵ��������ƶ�ul�ķ���
+        canClick=false;//���ϰѿ��ع��ϣ���ֹ�ٴε��?
+        //ֻ�б���transition���������꣬�����Զ��򿪿��أ������ť���з�Ӧ��?
+        setTimeout(function(){
+          canClick=true;
+        },500);
+      }
+    }
+    next.onclick=function(){
+      //����������ť�������ƶ�����������1��ʾ�ƶ���i+1��λ�ã��൱������һ��
+      move(1)
+    }
+    prev.onclick=function(){
+      move(-1);
+    }
+
+/* ��ʱ�ֲ� */
+
+    //����һ�������Զ�ʱ�����ڵ���һ��moveTo()������ʵ���Զ��ֲ���Ч��
+    var timer=setInterval(function(){
+      moveTo()
+    },1500);
+    var carousel=document.getElementById("carousel");
+    carousel.onmouseover=function(){
+      clearInterval(timer);
+    }
+    carousel.onmouseout=function(){
+      timer=setInterval(function(){
+        moveTo()
+      },1500);
+    }
+
+/* �û����liʵ����ת */
+
+   var canClick=true;//����--��ֹ�û�����li̫�쵼�´���
+   ulPoint.onclick=function(e){//����ð��ί���¼��Ż�
+     if(canClick){
+	   var li=e.target;
+	   if(li.nodeName=="LI"){
+          if(li.className!=="active"){
+            for(var i=0;i<lisPoint.length;i++){
+              if(lisPoint[i]==li){//��������СԲ��͵�ǰ�����СԲ��һ��ʱ�������˳�ѭ��
+                break;
+              }
+            }
+            moveTo(i);//��ʱ�û������СԲ���λ��Ҳ��ulImgҪ��ת��λ�ã�����moveTo��������
+            setTimeout(function(){
+              canClick=true;
+            },500);
+          }
+        }
+      }
+   }
+ </script>
+</body>
+</html>
